@@ -1,38 +1,38 @@
 name: Lint Code
 
 on:
- push:
-  branches-ignore:
-   - main
-   - development
-   - staging
- pull_request:
-  branches-ignore:
-   - main
-   - development
-   - staging
+  push:
+    branches-ignore:
+      - main
+      - development
+      - staging
+  pull_request:
+    branches-ignore:
+      - main
+      - development
+      - staging
 
 jobs:
- lint:
-  runs-on: ubuntu-latest
+  lint:
+    runs-on: ubuntu-latest
 
-  steps:
-   - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-   - name: Set up Node.js
-     uses: actions/setup-node@v2
-     with:
-      node-version: '20.11.1'
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.11.1'
 
-   - name: Cache .pnpm-store
-     uses: actions/cache@v2
-     with:
-      path: ~/.pnpm-store
-      key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-      restore-keys: |
-       ${{ runner.os }}-pnpm-
-   - name: Install Dependencies
-     run: npm install -g pnpm && pnpm install
+      - name: Cache .pnpm-store
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install Dependencies
+        run: npm install -g pnpm && pnpm install
 
-   - name: Run Lint
-     run: pnpm all-lint
+      - name: Run Lint
+        run: pnpm all-lint
