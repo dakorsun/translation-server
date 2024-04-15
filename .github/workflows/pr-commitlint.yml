@@ -4,7 +4,7 @@ on:
   issue_comment:
     types: [created, edited]
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
 
 jobs:
   commitlint:
@@ -49,6 +49,3 @@ jobs:
       - name: Run commitlint
         if: steps.extract-message.outputs.message != ''
         run: echo "${{steps.extract-message.outputs.message}}" | pnpx commitlint
-
-      # - name: Print github context
-      #   run: echo"${{ toJson(github)}}"
