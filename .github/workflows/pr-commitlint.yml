@@ -33,7 +33,7 @@ jobs:
         run: pnpm install
 
       - name: Extract Proposed Commit Message
-        if: github.event.issue.pull_request && startsWith(github.event.ocmment.body, 'SQUASH COMMIT:')
+        if: github.event.issue.pull_request && startsWith(github.event.comment.body, 'SQUASH COMMIT:')
         id: extract-message
         run: |
           MESSAGE="${{ github.event.comment.body }}"
