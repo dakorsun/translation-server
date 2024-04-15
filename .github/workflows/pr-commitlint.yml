@@ -33,7 +33,7 @@ jobs:
         run: pnpm install
 
       - name: Extract Proposed Commit Message
-        if: github.event.issue.pull_request && startsWith(github.event.comment.body, 'SQUASH COMMIT:')
+        if: github.event.pull_request && startsWith(github.event.comment.body, 'SQUASH COMMIT:')
         id: extract-message
         run: |
           MESSAGE="${{ github.event.comment.body }}"
@@ -50,5 +50,5 @@ jobs:
         if: steps.extract-message.outputs.message != ''
         run: echo "${{steps.extract-message.outputs.message}}" | pnpx commitlint
 
-      - name: Print github context
-        run: echo"${{ toJson(github)}}"
+      # - name: Print github context
+      #   run: echo"${{ toJson(github)}}"
