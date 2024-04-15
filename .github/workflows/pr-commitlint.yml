@@ -1,11 +1,14 @@
-name: Pull Request Check
+name: Validate Squash Commit Message
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  issue_comment:
+    types: [created, edited]
+  pull_request_review:
+    types: [submitted, edited]
 
 jobs:
   commitlint:
+    if: github.event.issue.pull_request != '' #Ensuring this runs only for PRs
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -30,11 +33,15 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Get commit message
-        id: commit-message
+      - name: Extract Proposed Cmmit Message
+        id: extract-message
         run: |
-          COMMIT_MESSAGE=$(git log --format=%B -n 1)
-          echo "::set-output name=message::$COMMIT_MESSAGE"
+          MESSAGE=%(jq -r ".comment.body" <<< "${{toJSON(github.event.comment) }}" | grep '^SQUASH COMMIT:' | cut -d':' -f2-)
+          if [-z "$MESSAGE"]; then
+            echo "No commit message proposal found."
+            exit 78 # Neutral exit
+          fi
+          echo "::set-output name=message::$MESSAGE"
 
       - name: Run commitlint
         run: echo "${{steps.commit-message.outputs.message}}" | pnpx commitlint
