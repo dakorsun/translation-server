@@ -8,7 +8,6 @@ on:
 
 jobs:
   commitlint:
-    if: github.event.issue.pull_request != '' #Ensuring this runs only for PRs
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -33,15 +32,15 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Extract Proposed Cmmit Message
+      - name: Extract Proposed Commit Message
+        if: github.event.issue.pull_request && startsWith(github.event.ocmment.body, 'SQUASH COMMIT:')
         id: extract-message
         run: |
-          MESSAGE=%(jq -r ".comment.body" <<< "${{toJSON(github.event.comment) }}" | grep '^SQUASH COMMIT:' | cut -d':' -f2-)
-          if [-z "$MESSAGE"]; then
-            echo "No commit message proposal found."
-            exit 78 # Neutral exit
-          fi
+          MESSAGE="${{ github.event.comment.body }}"
+          MESSAGE="${MESSAGE#SQUASH COMMIT: }"
+          echo "No commit message proposal found."
           echo "::set-output name=message::$MESSAGE"
 
       - name: Run commitlint
+        if: steps.extract-message.outputs.message != ''
         run: echo "${{steps.commit-message.outputs.message}}" | pnpx commitlint
