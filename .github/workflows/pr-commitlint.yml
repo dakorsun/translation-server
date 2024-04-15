@@ -1,0 +1,51 @@
+name: Validate Squash Commit Message
+
+on:
+  issue_comment:
+    types: [created, edited]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        node-version: [20.12.2]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: '8.15.7'
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Extract Proposed Commit Message
+        if: github.event.pull_request && startsWith(github.event.comment.body, 'SQUASH COMMIT:')
+        id: extract-message
+        run: |
+          MESSAGE="${{ github.event.comment.body }}"
+          MESSAGE="${MESSAGE#SQUASH COMMIT: }"
+          if [ -z "$MESSAGE" ]; then
+           echo "No commit message proposal found."
+           echo "::set-output name=message::"
+           exit 1 # This will fail the job if no message is extracted
+          else
+            echo "::set-output name=message::$MESSAGE"
+          fi
+
+      - name: Run commitlint
+        if: steps.extract-message.outputs.message != ''
+        run: echo "${{steps.extract-message.outputs.message}}" | pnpx commitlint

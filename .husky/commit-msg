@@ -1,0 +1,3 @@
+echo "Checking commit msg"
+
+pnpx commitlint --edit "$1";
