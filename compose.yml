@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  app:
+    image: translation_server:local
+    build:
+      context: .
+      # dockerfile: Dockerfile-dev
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    ports:
+      - '3330:3330'
+    environment:
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=ts_db_admin
+      - DATABASE_PASSWORD=ts_db_admin_password
+      - DATABASE_NAME=ts_db_local
+      - DATABASE_CONNECTION=local
+      - PORT=3330
+      - NODE_ENV=production
+      - JWT_SECRET=aoeu
+
+  postgres:
+    image: postgres:15.3-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=ts_db_admin
+      - POSTGRES_PASSWORD=ts_db_admin_passowrd
+      - POSTGRES_DB=ts_db_local
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'admin@admin.com'
+      PGADMIN_DEFAULT_PASSWORD: 'fakeaoeu'
+    ports:
+      - '5050:80'
+    depends_on:
+      - postgres
+
+volumes:
+  postgres:
