@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres_local:
+    image: postgres:15.3-alpine
+    container_name: postgres_local
+    restart: always
+    environment:
+      - POSTGRES_USER=ts_db_admin
+      - POSTGRES_PASSWORD=ts_db_admin_password
+      - POSTGRES_DB=ts_db_local
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_local:/var/lib/postgresql/data
+
+volumes:
+  postgres_local:
