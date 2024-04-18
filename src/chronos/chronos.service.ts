@@ -1,12 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { InjectRepository } from '@nestjs/typeorm';
 import { DriveService } from 'src/drive/drive.service';
+import { CronJob } from './entities/cron-job.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ChronosService {
   private readonly logger = new Logger(ChronosService.name);
 
-  constructor(private readonly driveService: DriveService) {}
+  constructor(
+    private readonly driveService: DriveService,
+    @InjectRepository(CronJob)
+    private readonly cronJobRepository: Repository<CronJob>,
+  ) {}
 
   @Cron('30 * * * * *')
   async checkDriveExistingFiles() {
