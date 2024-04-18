@@ -5,6 +5,7 @@ import { TypeOrmConfModule } from './typeorm/typeorm.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DriveService } from './drive/drive.service';
 import { ConfigModule } from '@nestjs/config';
+import { ChronosService } from './chronos/chronos.service';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { ConfigModule } from '@nestjs/config';
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService, DriveService],
+  providers: [AppService, DriveService, ChronosService],
 })
 export class AppModule {}
