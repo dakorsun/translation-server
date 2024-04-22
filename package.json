@@ -96,10 +96,14 @@
   },
   "release": {
     "branches": [
-      "development",
+      {
+        "name": "development",
+        "prerelease": "dev"
+      },
       "staging",
       "main"
     ],
+    "tagFormat": "v${version}",
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",

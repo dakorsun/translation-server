@@ -10,7 +10,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/development' || (github.ref == 'refs/heads/staging' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'hotfix'))
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging' || (github.ref == 'refs/heads/development' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'hotfix'))
     strategy:
       fail-fast: true
       matrix:
